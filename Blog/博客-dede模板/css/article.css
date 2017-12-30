@@ -1,0 +1,190 @@
+#nav{
+	width:1200px;
+	height:50px;
+	margin:0 auto;
+	margin-top:5px;
+	background:rgb(85,98,68);
+}
+#nav ul li{
+	float:left;
+}
+#nav ul li a{
+	display:block;
+	width:131px;
+	height:50px;
+	margin-left:2px;
+	text-align:center;
+	line-height:50px;
+	font-size:20px;
+	color:white;
+}
+#nav ul li a.first{
+	background:rgb(230,0,0);
+}
+#nav ul li a:hover{
+	background:rgb(230,0,0);
+}
+
+#main{
+	width:1200px;
+	margin:0 auto;
+	margin-top:5px;
+}
+#main .article{
+	background:green;
+	float:left;
+	width:800px;
+}
+#main .article .title{
+	text-align:center;
+	padding-top:6px;
+	padding-bottom:6px;
+	border-bottom:1px dashed black;
+}
+#main .article .info{
+	height:30px;
+	margin-bottom:12px;
+	border-bottom:1px dashed black;
+}
+#main .article .info>span:first-child{
+	margin-left:50px;
+	line-height:30px;
+}
+#main .article .info .color{
+	color:red;
+}
+#main .article .info>span:first-child+span{
+	margin-left:130px;
+	line-height:30px;
+}
+#main .article .info>span:first-child+span+span{
+	margin-left:230px;
+	line-height:30px;
+}
+#main .article .content{
+	text-indent:2em;
+	letter-spacing:0.1em;
+}
+#main .slide .h2{
+	border-left:2px solid rgb(20,150,30); 
+	padding-left:10px;
+	font-size:22px;
+}
+#main .slide{
+	float:right;
+	width:390px;
+	margin-bottom:10px;
+	background:rgb(100,20,30);
+}
+#main .slide .search{
+	position:relative;
+	padding:20px 0;
+	margin-top:20px;
+	margin-bottom:20px;
+	background:rgb(250,250,250);
+}
+#main .slide .search form .search-value{
+	width:215px;
+	height:30px;
+	outline:none;
+	padding-left:20px;
+	padding-right:30px;
+	margin-left:60px;
+	line-height:30px;
+	font-size:18px;
+}
+::-ms-clear,::-ms-reveal{
+	display:none;
+}
+::-moz-placeholder{
+	color:rgb(180,180,180);
+}              
+::-webkit-input-placeholder{
+	color:rgb(180,180,180);
+}
+:-ms-input-placeholder{
+	color:rgb(180,180,180);
+}   
+#main .slide .search form .placeholder{
+	position:absolute;
+	width:215px;
+	height:30px;
+	left:82px;
+	top:22px;
+	line-height:30px;
+	color:rgb(180,180,180);
+	cursor:text;
+}
+#main .slide .search form .search-btn{
+	position:absolute;
+	right:60px;
+	top:25px;
+	width:30px;
+	height:30px;
+	border:none;
+	outline:none;
+	background:url('../img/search.png') no-repeat 3px 3px;
+}
+#main .slide .search form .search-btn:hover{
+	cursor:pointer;
+}
+#main .slide .column{
+	height:100px;
+	padding-left:40px;
+	padding-bottom:20px;
+	background:rgb(150,210,230);
+}
+#main .slide .column ul li{
+	float:left;
+	width:120px;
+	height:40px;
+	margin-left:20px;
+	margin-top:10px;
+}
+#main .slide .column ul li a{
+	display:block;
+	width:120px;
+	height:40px;
+	background:rgb(10,210,30);
+	text-align:center;
+	line-height:40px;
+}
+#main .slide .column ul li a:hover{
+	background:red;
+}
+#main .slide .hot-click h3{
+	padding-left:10px;
+	border-left:3px solid rgb(210,120,20);
+	font-size:18px;
+}
+#main .slide .hot-click .title{
+	position:relative;
+}
+#main .slide .hot-click .title ul{
+	margin-top:10px;
+}
+#main .slide .hot-click .title ul li{
+	height:30px;
+	padding-left:40px;
+	border-bottom:1px dashed black;
+}
+#main .slide .hot-click .title ul li a{
+	display:block;
+	width:100%;
+	height:30px;
+	line-height:30px;
+	text-align:left;
+}
+#main .slide .hot-click .title ol{
+	position:absolute;
+	top:4px;
+	left:7px;
+}
+#main .slide .hot-click .title ol li{
+	width:20px;
+	height:20px;
+	margin-bottom:11px;
+	background:rgb(0,255,0);
+	line-height:20px;
+	text-align:center;
+}

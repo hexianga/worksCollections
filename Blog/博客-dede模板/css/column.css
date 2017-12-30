@@ -1,0 +1,23 @@
+/*分栏的显示开始*/
+#column{
+	width:1200px;
+	margin:30px auto;
+}
+#column ul li{
+	float:left;
+	width:200px;
+	height:50px;
+	margin-left:80px;
+}
+#column ul li a{
+	display:block;
+	width:200px;
+	height:50px;
+	line-height:50px;
+	text-align:center;
+	background:green;
+}
+#column ul li a:hover{
+	background:rgb(210,20,20);
+}
+/*分栏的显示结束*/
