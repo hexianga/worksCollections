@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				box-sizing: border-box;
+			}
+			#area{
+				display: block;
+				width: 500px;
+				height: 400px;
+				margin: 0 auto;
+				padding-left: 10px;
+				padding-top: 10px;
+				border: 3px solid black;
+				border-radius: 1px;
+				background: rgba(0,0,0,0.6);
+				font-size: 20px;
+				color:white;
+			}
+			form{
+				width:500px;
+				margin: 10px auto;
+			}
+			#content{
+				width:410px;
+				height:50px;
+				padding-left: 10px;
+				font-size: 22px;
+			}
+			#submit{
+				width: 80px;
+				height: 50px;
+				margin-left: 5px;
+				font-size: 18px;
+			}
+		</style>
+		<script src="js/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<textarea name="area" id="area"></textarea>
+		<!--阻止浏览器的默认行为-->
+		<form action="javascript:;" method="post">
+			<input type="text" name="content" id="content" />
+			<input type="submit" value="发送" id="submit"/>
+		</form>
+	</body>
+	<script type="text/javascript">
+		var evtsource = null;
+		function get(){
+			evtsource = new EventSource('index.php?a=get');
+			//数据是从事件源处获得的
+			evtsource.onmessage=function(e){
+				$('#area').html(e.data);
+			}
+		}
+		get();
+		
+		$('form').submit(function(){
+			 var inpu = $('input[name=content]');
+			 var value = inpu.val();
+			 $.ajax({
+			 	type:"post",
+			 	url:"index.php?a=put",
+			 	async:true,
+			 	data:{content:value}
+			 });
+			 //清空发送文本
+			 inpu.val("");
+		})
+	</script>
+</html>

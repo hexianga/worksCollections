@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<p>接收到的数据:<span id="span"></span></p>
+		<script type="text/javascript">
+			//确定发送更新的页面
+			var source=new EventSource('send.php');
+			//每发送一次就会触发onmessage事件
+			source.onmessage=function(e){
+				document.getElementById('span').innerHTML=e.data;
+			}
+		</script>
+	</body>
+</html>
