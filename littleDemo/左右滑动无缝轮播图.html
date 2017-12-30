@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	/*让元素居于一行主要是让盒子要有足够的宽才行，所以盒子的宽度应该和图片宽度之和一致*/
+		*{
+			margin: 0;
+			padding: 0; 
+		}
+		.photo-frame{
+			position: relative;
+			width: 1200px;
+			height: 535px;
+			overflow: hidden;
+			background-color: red;
+		}
+		.gallary{
+			position: absolute;
+			list-style: none;
+			width: 7200px;
+		}
+		.gallary li{
+			float:left;
+		}
+	</style>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+	<div>
+		<div class="photo-frame">
+			<ul class="gallary">
+				<li><img src="1.jpg" alt=""></li>
+				<li><img src="2.jpg" alt=""></li>
+				<li><img src="3.jpg" alt=""></li>
+				<li><img src="4.jpg" alt=""></li>
+				<li><img src="5.jpg" alt=""></li>
+				<li><img src="1.jpg" alt=""></li>
+			</ul>
+		</div>
+
+		<script>
+			$(function() {
+				let index = 0;
+				setInterval(function(){
+					if(index===5){
+						$('.gallary').css({ left: 0});
+						index = 0;
+					}
+					$('.gallary').animate({ left: -1200*(index+1)},1200);
+					index += 1;
+				},1000);
+			});
+			
+		</script>
+	</div>
+</body>
+</html>
