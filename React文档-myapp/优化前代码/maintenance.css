@@ -1,0 +1,26 @@
+body{
+    width:800px;
+    margin: 0 auto;
+    margin-top:20px;
+}
+#fileContent,#output{
+    font-family: 'Consolas';
+    font-size:18px;
+    line-height:26px;
+}
+#input{
+    display:none;
+}
+.upfile{
+    margin-bottom:10px;
+}
+#btn,#btn2{
+    width:100px;
+    height:30px;
+    line-height:30px;
+    border:none;
+    background: linear-gradient(#faa51a,#f47a20);
+}
+#btn{
+    margin-right: 40px;
+}

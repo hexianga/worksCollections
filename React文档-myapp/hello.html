@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://cdn.bootcss.com/react/15.6.1/react.min.js"></script>
+    <script src="https://cdn.bootcss.com/react/15.6.1/react-dom.min.js"></script>
+    <script src="https://cdn.bootcss.com/babel-standalone/6.26.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+getNowDate(){
+  let date = new Date();
+  let month=(date.getMonth()+1).length>1 ? 
+      (date.getMonth()+1) : 
+      ('0'+(date.getMonth()+1));
+  let day=date.getDate().length>1 ? 
+      date.getDate() : 
+      ('0'+date.getDate());
+  let now = date.getFullYear()+'/'+month+'/'+day;
+  return now;
+}
+</script>
+  </body>
+</html>

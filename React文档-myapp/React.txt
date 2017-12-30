@@ -1,0 +1,34 @@
+1.react.js是一个构建用户界面的javascript库，它因单向数据绑定和虚拟DOM两大特点在前端界大放异彩。
+
+2.Create React App 是开始构建新的 React 单页应用程序的最佳方式。已经搭建好了开发环境(Babel,gulp,webpack)，可以零配置使用。
+npm install -g create-react-app
+create-react-app my-app
+cd my-app
+npm start
+由此创建了一个react工程，运行npm start，在浏览器端输入localhost:3000,可以看到效果。
+
+3.需要安装的包：react，react-dom，babel-preset-env，babel-preset-react，webpack等很多很多
+
+4.props：接受参数  render：返回一个视图的层次结构
+
+5.可以通过使用 <ShoppingList /> 轻松地编写自定义的 React 组件。每个组件都是封装的，因此它可以独立操作，
+这允许你从简单的组件构建复杂的UI。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
