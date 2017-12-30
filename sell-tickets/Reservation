@@ -1,0 +1,642 @@
+import javax.swing.*;
+import javax.swing.table.*;
+
+import net.sourceforge.jdatepicker.JDateComponentFactory;
+import net.sourceforge.jdatepicker.JDatePanel;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;//Date()类在实用包和sql包中都有，构造方法不一样，所以必须要明确地导入
+
+public class Reservation {
+	public static void main (String args[]){
+		new Reservation();
+	}
+	String SQL, data[][],uname;
+	Connection con;
+	PreparedStatement sql;
+	ResultSet result1, result2;
+	JFrame win;
+	public JTable table;
+	JScrollPane scroll;
+	JLabel start_station, end_station, start_date, label,login_info,show_uname,showLogTime;
+	JTextField start_input, end_input;
+	JButton search, order, select_date, user, admin,user_Tickets,user_exit,admin_exit;
+	JTextField date;
+	Date _date;
+	JTableHeader tableHeader;
+	SimpleDateFormat format;
+	String[] column = { "车次", "始发站", "终点站", "发车时间", "到站时间", "票价", "剩余票数",
+			"历经天数" };
+
+	public Reservation() {
+		start_station = new JLabel("始发站：");
+		end_station = new JLabel("终点站：");
+		start_input = new JTextField("成都");
+		end_input = new JTextField("北京");
+		start_date = new JLabel("出发日期：");
+		search = new JButton("查询");
+		user = new JButton("用户登录/注册");
+		admin = new JButton("管理员功能入口");
+		user_Tickets = new JButton("我的订单");
+		_date = new Date();
+		format = new SimpleDateFormat("yyyy-MM-dd");
+		date = new JTextField(format.format(_date));
+		select_date = new JButton("选择日期");
+		user_exit = new JButton("用户退出登录");
+		admin_exit = new JButton("管理员退出登录");
+		login_info = new JLabel("您还没有登录，请登录");
+		show_uname = new JLabel();
+		String nameinfo="",logTime="";
+		Date time = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(User_Login_Input.user_name!=""){
+			nameinfo = "用户名："+User_Login_Input.user_name;
+		}else if(Admin_Login_Input.admin_name !=""){
+			nameinfo = "用户名："+Admin_Login_Input.admin_name;
+		}
+		show_uname.setText(nameinfo);
+		showLogTime = new JLabel();
+		logTime = "登录时间："+format.format(time);
+		showLogTime.setText(logTime);
+		
+		date.setBounds(350, 10, 80, 30);
+		select_date.setBounds(430, 10, 100, 30);
+		start_station.setBounds(10, 10, 60, 30);
+		start_input.setBounds(60, 10, 60, 30);
+		end_station.setBounds(140, 10, 60, 30);
+		end_input.setBounds(200, 10, 60, 30);
+		start_date.setBounds(280, 10, 80, 30);
+		search.setBounds(550, 10, 80, 30);
+		user.setBounds(827, 10, 150, 30);
+		admin.setBounds(827, 50, 150, 30);
+		user_Tickets.setBounds(827, 90, 150, 30);
+		user_exit.setBounds(827, 130, 150, 30);
+		admin_exit.setBounds(827, 130, 150, 30);
+		login_info.setBounds(827, 170, 150, 30);
+		show_uname.setBounds(815, 170, 150, 30);
+		showLogTime.setBounds(815, 210, 180, 30);
+		
+		getInitDBDataByQuery();
+		createInitTable();
+		search.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				getSearchData();
+				DefaultTableModel tableModel = (DefaultTableModel) table
+						.getModel();
+				tableModel.setDataVector(data, column);
+				tableModel.addColumn("预约");
+				table.getColumnModel().getColumn(8)
+						.setCellRenderer(new DefaultTableCellRenderer() {
+							/**
+					 * 
+					 */
+							private static final long serialVersionUID = 1L;
+
+							public Component getTableCellRendererComponent(
+									JTable table, Object value,
+									boolean isSelected, boolean hasFocus,
+									int row, int column) {
+								if (column == 8) {
+									return label;
+								} else {
+									return null;
+								}
+							}
+						});
+				table.getColumnModel().getColumn(8)
+						.setCellEditor(new OrderEditor());
+			}
+		});
+		search.registerKeyboardAction(
+				new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						getSearchData();
+						DefaultTableModel tableModel = (DefaultTableModel) table
+								.getModel();
+						tableModel.setDataVector(data, column);
+						tableModel.addColumn("预约");
+						table.getColumnModel()
+								.getColumn(8)
+								.setCellRenderer(
+										new DefaultTableCellRenderer() {
+											/**
+					 * 
+					 */
+											private static final long serialVersionUID = 1L;
+
+											public Component getTableCellRendererComponent(
+													JTable table, Object value,
+													boolean isSelected,
+													boolean hasFocus, int row,
+													int column) {
+												if (column == 8) {
+													return label;
+												} else {
+													return null;
+												}
+											}
+										});
+						table.getColumnModel().getColumn(8)
+								.setCellEditor(new OrderEditor());
+					}
+				}, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+				JComponent.WHEN_IN_FOCUSED_WINDOW);
+		select_date.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new select(true, date, 200, 150);
+			}
+		});
+
+		user.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(User_Login_Input.user_name!=""){
+					JOptionPane.showMessageDialog(null, "您已经登录，请不要重复登录！",
+							 "提示信息", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				new User_Login_Input();
+				win.dispose();
+			}
+		});
+		admin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(Admin_Login_Input.admin_name==""){
+					int n = JOptionPane.showConfirmDialog(null, "您还没有登录，请您先登录！",
+							 "提示信息", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (n == 0) {
+						new Admin_Login_Input();
+						win.setVisible(false);
+					}
+					return;
+				}
+				new Admin_Put_Tickets();
+				win.setVisible(false);
+			}
+		});
+		user_Tickets.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(User_Login_Input.user_name==""){
+					int n = JOptionPane.showConfirmDialog(null, "您还没有登录，请您先登录！",
+							 "提示信息", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (n == 0) {
+						new User_Login_Input();
+						win.setVisible(false);
+					}
+					return;
+				}
+				new Tuipiao();
+				win.setVisible(false);
+			}
+		});
+	
+		user_exit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int n = JOptionPane.showConfirmDialog(null, "您确定要退出登录吗?", "确认对话框",
+				JOptionPane.OK_CANCEL_OPTION);
+				// 0表示点击了确认和是
+				if (n != 0) {
+						return;
+				 }
+				User_Login_Input.user_name="";
+				new Reservation();
+				win.dispose();
+			}
+			
+		});
+		
+		admin_exit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int n = JOptionPane.showConfirmDialog(null, "您确定要退出登录吗?", "确认对话框",
+				JOptionPane.OK_CANCEL_OPTION);
+				// 0表示点击了确认和是
+				if (n != 0) {
+						return;
+				 }
+				Admin_Login_Input.admin_name="";
+				new Reservation();
+				win.dispose();
+			}
+			
+		});
+	}
+
+	public void createInitTable() {
+		// String[] column={ "车次", "始发站", "终点站", "发车时间", "到站时间", "票价","剩余票数" };
+		DefaultTableModel model = new DefaultTableModel(data, column) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public boolean isCellEditable(int row, int column) {
+				if (column == 8)
+					return true;
+				else {
+					return false;
+				}
+			}
+		};
+		table = new JTable(model);
+		table.setRowHeight(28);
+		table.setFont(new Font("宋体", Font.PLAIN, 15));
+		// 数据居中显示
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+		renderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+		table.setDefaultRenderer(Object.class, renderer);
+		table.setSelectionBackground(new Color(134, 250, 183));
+		table.setSelectionForeground(new Color(255, 0, 0));
+		scroll = new JScrollPane(table);
+		scroll.setBounds(10, 50, 800, 440);
+		scroll.add(new JButton("预约"));
+		// final JFrame win;
+		win = new JFrame("车票预售");
+		win.setVisible(true);
+		win.setLayout(null);
+		win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		int width = 1030, height = 600;
+		int x = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2;
+		int y = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
+		win.setBounds(x, y, width, height);
+		
+//		setBounds(50, 50, 1000, 600);
+		win.add(scroll);
+		win.add(search);
+		win.add(start_station);
+		win.add(start_input);
+		win.add(end_station);
+		win.add(end_input);
+		win.add(start_date);
+		win.add(date);
+		win.add(select_date);
+		win.add(user);
+		win.add(admin);
+		win.add(user_Tickets);
+		if(User_Login_Input.user_name!=""){
+			win.add(user_exit);
+		}
+		if(Admin_Login_Input.admin_name!=""){
+			win.add(admin_exit);
+		}
+		if(User_Login_Input.user_name=="" && Admin_Login_Input.admin_name==""){
+			win.add(login_info);
+		}
+		if(User_Login_Input.user_name!="" || Admin_Login_Input.admin_name!=""){
+			win.add(show_uname);
+			win.add(showLogTime);
+		}
+		
+		order = new JButton("预约");
+		label = new JLabel();
+		label.setLayout(null);
+		order.setBounds(9, 3, 70, 20);
+		label.add(order);
+
+		DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+		tableModel.addColumn("预约");
+
+		tableHeader = table.getTableHeader();
+		tableHeader.setPreferredSize(new Dimension(table.getWidth(), 30));
+		Font font = new Font("微软雅黑", Font.HANGING_BASELINE, 16);
+		tableHeader.setFont(font);
+		tableHeader.setBackground(new Color(71, 229, 138));
+		
+		table.getColumnModel().getColumn(8)
+				.setCellRenderer(new DefaultTableCellRenderer() {
+					/**
+			 * 
+			 */
+					private static final long serialVersionUID = 1L;
+
+					public Component getTableCellRendererComponent(
+							JTable table, Object value, boolean isSelected,
+							boolean hasFocus, int row, int column) {
+						if (column == 8) {
+							return label;
+						} else {
+							return null;
+						}
+						//
+					}
+				});
+		table.getColumnModel().getColumn(8).setCellEditor(new OrderEditor());
+
+	}
+
+	public void ConnectionDB() {
+		try {
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		} catch (ClassNotFoundException e) {
+			System.out.print(e);
+		}
+		try {
+			con = DriverManager.getConnection("jdbc:odbc:Sell Tickets", "", "");
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+
+	public void getSearchData() {
+		try {
+			
+			ConnectionDB();
+			SQL = "select * from Tickets where DateDiff('d',tiket_start_date, #"
+					+ date.getText()
+					+ "#)<=0 and DateDiff( 'd', tiket_start_date, #"
+					+ date.getText()
+					+ "#)>=0 and tiket_start_station='"
+					+ start_input.getText()
+					+ "' and tiket_end_station='"
+					+ end_input.getText() + "'";
+			sql = con.prepareStatement(SQL);
+			result1 = sql.executeQuery();
+			SQL = "select count(*) as totalcount from Tickets where DateDiff('d',tiket_start_date, #"
+					+ date.getText()
+					+ "#)<=0 and DateDiff( 'd', tiket_start_date, #"
+					+ date.getText()
+					+ "#)>=0 and tiket_start_station='"
+					+ start_input.getText()
+					+ "' and tiket_end_station='"
+					+ end_input.getText() + "'";
+			sql = con.prepareStatement(SQL);
+			result2 = sql.executeQuery();
+			int rowCount = 0;
+			if (result2.next()) {
+				rowCount = result2.getInt("totalcount");
+			}
+			Integer remain_number;
+			data = new String[rowCount+25][8];
+			for (int i = 0; result1.next(); i++) {
+				data[i][0] = result1.getString(2);
+				data[i][1] = result1.getString(3);
+				data[i][2] = result1.getString(4);
+				data[i][3] = result1.getTime(5).toString();
+				data[i][4] = result1.getTime(6).toString();
+				data[i][5] = result1.getString(7);
+				remain_number = new Integer(result1.getInt(8));
+				data[i][6] = remain_number.toString();
+				data[i][7] = result1.getString(9);
+			}
+			con.close();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+
+	}
+
+	class OrderEditor extends AbstractCellEditor implements TableCellEditor,
+			ActionListener {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		/**
+ * 
+ */
+		Connection con;
+		PreparedStatement sql;
+		String SQL;
+		JButton order;
+		JLabel label;
+
+		public OrderEditor() {
+			order = new JButton("预约");
+			order.addActionListener(this);
+			label = new JLabel();
+			label.setLayout(null);
+			order.setBounds(9, 3, 70, 20);
+			label.add(order);
+		}
+
+		// 连接数据库
+		public void ConnectionDB() {
+			try {
+				Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			} catch (ClassNotFoundException e) {
+				System.out.print(e);
+			}
+			try {
+				con = DriverManager.getConnection("jdbc:odbc:Sell Tickets", "",
+						"");
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+		}
+
+		public void actionPerformed(ActionEvent arg0) {
+			if(Admin_Put_Tickets.sale==false){
+				JOptionPane.showMessageDialog(null,"现已停止售票！","提示信息",JOptionPane.INFORMATION_MESSAGE);	
+				return;
+			}
+			
+//			判断车次是否存在
+			int inde = table.getSelectedRow();
+			if((String) table.getValueAt(inde, 1)==null){
+				 JOptionPane.showMessageDialog(null, "不存在该车次，请确认！", "提示信息",
+							JOptionPane.WARNING_MESSAGE);
+				 return;
+		    }
+//			 判断用户是否登录
+			 if (User_Login_Input.user_name == "") {
+				 int n = JOptionPane.showConfirmDialog(null, "您还没有登录，请您先登录！",
+						 "提示信息", JOptionPane.YES_NO_CANCEL_OPTION);
+			
+				 if (n == 0) {
+					 new User_Login_Input();
+					 win.dispose();
+				 }
+				 return;
+			 }
+
+//			 向用户确认是否预约
+			 int n = JOptionPane.showConfirmDialog(null, "您确定要预约吗?", "确认对话框",
+			 JOptionPane.OK_CANCEL_OPTION);
+			 // 0表示点击了确认和是
+			 if (n != 0) {
+				 return;
+			 }
+			ConnectionDB();
+			try {
+
+				Date now_date = new Date();
+				SimpleDateFormat format = new SimpleDateFormat(
+						"yyyy/MM/dd HH:mm:ss");
+				// 获取表中选中行的数据
+				String ticket[] = new String[9];
+				int index = table.getSelectedRow();
+				int column = table.getColumnCount();
+				for (int i = 0; i < column; i++) {
+					ticket[i] = (String) table.getValueAt(index, i);
+				}
+			
+SQL = "select * from reser where member_name='"+User_Login_Input.user_name+"' and start_date=#"+date.getText()+" "+ticket[3]+"#";
+sql = con.prepareStatement(SQL);
+ResultSet re = sql.executeQuery();
+if(re.next()){
+	JOptionPane.showMessageDialog(null, "您已经预约这个时间点的车票，请不要重复预约！", "提示信息",
+			JOptionPane.WARNING_MESSAGE);
+	return;
+}
+con.close();
+
+
+//必须在连接对象创建之后立刻将自动提交模式关闭，否则会出错
+ConnectionDB();
+con.setAutoCommit(false);		
+//				订票信息增加一条记录
+//				SQL的语句千万不能是order这样的保留字，数据库不区分大小写，所以大小写都不行
+				String SQ = "INSERT INTO reser(member_name,ticket_num,start_station,end_station,start_date,end_date,ticket_price,duration,"
+						+ "order_time) values('"
+						+ User_Login_Input.user_name
+						+ "','"
+						+ ticket[0]
+						+ "','"
+						+ ticket[1]
+						+ "','"
+						+ ticket[2]
+						+ "',#"
+						+ date.getText()
+						+ " "
+						+ ticket[3]
+						+ "#,#"
+						+ ticket[4]
+						+ "#,"
+						+ "'"
+						+ ticket[5]
+						+ "','"
+						+ ticket[7] + "',#" + format.format(now_date) + "#)";
+				sql = con.prepareStatement(SQ);
+				sql.executeUpdate();
+//				车票数减一
+				Integer remain_number;
+				remain_number = new Integer(ticket[6]);
+				remain_number--;
+
+				String S = "update Tickets set tiket_remain_tickets="
+						+ remain_number
+						+ " where DateDiff('d',tiket_start_date,#"
+						+ date.getText() + "#)<=0 "
+						+ "and DateDiff('d',tiket_start_date,#"
+						+ date.getText() + "#)>=0 and train_number='"
+						+ ticket[0] + "'";
+
+				sql = con.prepareStatement(S);
+				sql.executeUpdate();
+				
+//				提交事务
+				con.commit();
+				JOptionPane.showMessageDialog(null, "预约成功！", "提示信息",JOptionPane.INFORMATION_MESSAGE);
+				con.close();
+
+			} catch (SQLException e) {
+				try{
+					con.rollback();
+					System.out.print("事务回滚");
+				}catch(SQLException exp){
+					e.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		public Object getCellEditorValue() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public Component getTableCellEditorComponent(JTable table,
+				Object value, boolean isSelected, int row, int column) {
+			return label;
+		}
+
+	}
+
+	public void getInitDBDataByQuery() {
+		try {
+			ConnectionDB();
+			
+			String str =date.getText();
+			SQL = "select * from Tickets where DateDiff('d',tiket_start_date, #"
+					+ str
+					+ "#)<=0 "
+					+ "AND DateDiff( 'd', tiket_start_date, #"
+					+ str + "#)>=0";
+			sql = con.prepareStatement(SQL);
+			result1 = sql.executeQuery();
+			SQL = "select count(*) as totalcount from Tickets";
+			sql = con.prepareStatement(SQL);
+			result2 = sql.executeQuery();
+			int rowCount = 0;
+			if (result2.next()) {
+				rowCount = result2.getInt("totalcount");
+			}
+			Integer remain_number;
+			data = new String[rowCount][8];
+			for (int i = 0; result1.next(); i++) {
+				data[i][0] = result1.getString(2);
+				data[i][1] = result1.getString(3);
+				data[i][2] = result1.getString(4);
+				data[i][3] = result1.getTime(5).toString();
+				data[i][4] = result1.getTime(6).toString();
+				data[i][5] = result1.getString(7);
+				remain_number = new Integer(result1.getInt(8));
+				data[i][6] = remain_number.toString();
+				data[i][7] = result1.getString(9);
+			}
+			
+			con.close();
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+}
+
+class select extends JDialog {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 弹出日期选择窗口
+	 * 
+	 * @param modal
+	 *            是否是模态窗口
+	 * @param txtSelectedDate
+	 *            日期内容接收文本框
+	 * @param screenX
+	 *            显示X点坐标
+	 * @param screenY
+	 *            显示Y点坐标
+	 * @return
+	 */
+	public select(boolean modal, final JTextField txtSelectedDate, int screenX,
+			int screenY) {
+		final JDatePanel jp = JDateComponentFactory
+				.createJDatePanel(new UtilDateModel(new Date()));
+		jp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (txtSelectedDate != null) {
+					try {
+						txtSelectedDate.setText(new SimpleDateFormat(
+								"yyyy-MM-dd").format(jp.getModel().getValue()));
+					} catch (Exception ex) {
+						txtSelectedDate.setText("");
+					}
+				}
+			}
+		});
+		JPanel pnl = (JPanel) jp;
+		this.add(pnl);
+		this.setTitle("选择日期");
+		this.setResizable(false);
+		this.setModal(modal);
+		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		this.setBounds(screenX, screenY, 300, 250);
+		this.setVisible(true);
+	}
+}

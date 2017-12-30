@@ -1,0 +1,107 @@
+import java.awt.*;
+
+import javax.swing.*;
+
+import java.awt.event.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class User_Login_Input extends JFrame{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	JLabel name,password;
+	JTextField name_Input;
+	JPasswordField password_Input;
+	JButton login,register,cancel;
+	ActionListener register_listener;
+	ActionListener login_listener;
+	static String user_name="";
+	public User_Login_Input(){
+		init();
+		setVisible(true);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	}
+	public void init(){
+		setLayout(null);
+		name = new JLabel("用户名：");
+		password =new JLabel("密码：");
+		name.setBounds(80, 60, 80, 50);
+		password.setBounds(93, 130, 80, 50);
+		name_Input = new JTextField(20);
+		password_Input = new JPasswordField(20);
+		name_Input.setBounds(150,70,160,30);
+		password_Input.setBounds(150,140,160,30);
+		login = new JButton("登录");
+		register = new JButton("注册");
+		cancel = new JButton("取消");
+		login.setBounds(30, 210, 100, 30);
+		register.setBounds(150, 210, 100, 30);
+		cancel.setBounds(270, 210, 100, 30);
+		
+		
+		add(name);
+		add(password);
+		add(name_Input);
+		add(password_Input);
+		add(login);
+		add(register);
+		add(cancel);
+
+		setTitle("用户登录");
+		int width = 400, height = 400;
+		int x = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2;
+		int y = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
+		setBounds(x, y, width, height);
+		
+		register.addActionListener(register_listener =new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				new User_Register();
+				dispose();
+			}
+		});
+		register.setFocusPainted(false);
+		register.registerKeyboardAction(register_listener,KeyStroke.getKeyStroke(KeyEvent.VK_R,0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
+		login.addActionListener(login_listener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				ConnectionDatabase con = new ConnectionDatabase();
+				con.Connect("Sell Tickets","","");
+				String name = name_Input.getText();
+				String password = new String(password_Input.getPassword());
+				String sql = "select * from User where user_name='"+name+"' and user_password='"+password.trim()+"'";
+				ResultSet result=con.Query(sql);
+				try {
+					if(result.next()){
+						User_Login_Input.user_name = name;
+						JOptionPane.showMessageDialog(null,"恭喜你！登录成功！","提示信息",
+								JOptionPane.INFORMATION_MESSAGE);
+						new Reservation();
+						dispose();
+					} 
+					else {
+						JOptionPane.showMessageDialog(null,"登录失败！请检查输入是否正确！","提示信息",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				} catch (SQLException e1) {
+					System.out.print(e1);
+				} 
+				con.Close();
+			}
+			
+		});
+				
+		login.setFocusPainted(false);
+		login.registerKeyboardAction(login_listener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
+		cancel.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				new Reservation();
+				dispose();
+			}
+		});
+	}	
+}

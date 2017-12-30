@@ -1,0 +1,118 @@
+import javax.swing.*;
+
+import java.awt.Toolkit;
+import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Admin_Login_Input extends JFrame{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	JLabel name,password;
+	JTextField name_Input;
+	JPasswordField password_Input;
+	JButton login,cancel;
+	ActionListener listener;
+	static String admin_name="";
+	public Admin_Login_Input(){
+		init();
+		setVisible(true);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	}
+	public void init(){
+		setLayout(null);
+		name = new JLabel("用户名：");
+		password =new JLabel("密码：");
+		name.setBounds(80, 60, 80, 50);
+		password.setBounds(93, 130, 80, 50);
+		name_Input = new JTextField(20);
+		password_Input = new JPasswordField(20);
+		name_Input.setBounds(150,70,160,30);
+		password_Input.setBounds(150,140,160,30);
+		
+		login = new JButton("登录");
+		cancel = new JButton("取消");
+		login.setBounds(50, 210, 100, 30);
+		cancel.setBounds(250,210,100,30);
+		login.setFocusPainted(false);
+		add(name);
+		add(password);
+		add(name_Input);
+		add(password_Input);
+		add(login);
+		add(cancel);
+		setTitle("管理员登录");
+//		设置位置
+		int width = 400, height = 400;
+		int x = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2;
+		int y = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
+		setBounds(x, y, width, height);
+		login.addActionListener(listener=new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String name = name_Input.getText().trim();
+				if(name.length()>50 || name.length()==0){
+					JOptionPane.showMessageDialog(null,"登录名长度必须是0——50！","提示信息",JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String password = new String(password_Input.getPassword());
+				String regex = "[\\p{Alnum}~！@#$%^&*()-_+]+";//字母是数字以及常见标点符号
+				if(password.trim().length() < 6 || password.trim().length() > 20 ){
+					JOptionPane.showMessageDialog(null,"登录密码长度必须在6——20","提示信息",JOptionPane.ERROR_MESSAGE);
+					
+					return;
+				}else if(!password.trim().matches(regex)){
+					JOptionPane.showMessageDialog(null,"登录密码必须是数字，字母，常见标点符号！！","提示信息",JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				//连接数据库向其中写入数据
+				Connection con;
+				PreparedStatement sql;
+				ResultSet result;
+				String SQL;
+				try{
+					Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+				}
+				catch(ClassNotFoundException e1){
+					System.out.print(e1);
+				}
+				try{
+					con=DriverManager.getConnection("jdbc:odbc:Sell Tickets","","");
+					SQL="select Admin_id from Admin where Admin_name='"+name+"' and Admin_password='"+password+"'";// 
+					sql=con.prepareStatement(SQL);
+					result=sql.executeQuery();
+					if(result.next()){
+						JOptionPane.showMessageDialog(null,"恭喜你！ 登录成功","提示信息",JOptionPane.INFORMATION_MESSAGE);
+						Admin_Login_Input.admin_name=name;
+						Admin_Put_Tickets put = new Admin_Put_Tickets();
+						put.setTitle("管理员放票");
+						
+					}
+					else{
+						JOptionPane.showMessageDialog(null,"对不起，登录失败，请重新登录","提示信息",JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				catch(SQLException e1){
+					System.out.println(e1);
+				}
+				dispose();
+			}
+			
+		});
+		login.registerKeyboardAction(listener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
+		cancel.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				new Reservation();
+				dispose();
+			}
+			
+		});
+	}
+}

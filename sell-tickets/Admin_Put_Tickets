@@ -1,0 +1,397 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
+public class Admin_Put_Tickets extends JFrame {
+	/**
+	 * 该类用来实现管理员将火车票放入预约火车票的数据库
+	 */
+	private static final long serialVersionUID = 1L;
+	static boolean sale = true;
+//	声明该界面的各个组件
+	JButton search, put_all, sell, update, put, select_date,exit,stop;
+	JLabel start_station, end_station, put_date,info;
+	JTextField istart_station, iend_station, iput_date;
+	Date date;
+	SimpleDateFormat format;
+//	定义表格的列名
+	String[] name = {"车次","起点站","终点站","发车时间","到站时间","票价","票数","历经天数"};
+	DefaultTableModel datas;
+	JTable table;
+	JScrollPane scroll;
+//	声明数据库操作中用到的对象
+	Connection con;
+	PreparedStatement sql;
+	ResultSet result1, result2;
+	String SQL;
+	String[][] data,updata;
+	int rowCount;
+	JTableHeader tableHeader;
+	Font font;
+	
+	public Admin_Put_Tickets() {
+		init();
+		ConnectionDB();
+		getInitDBDataByQuery();
+		int width = 800, height = 550;
+		int x = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2;
+		int y = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
+		setBounds(x, y, width, height);
+//		setBounds(300,100,800,550);
+		setVisible(true);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+//		创建表格
+		datas = new DefaultTableModel(data,name);
+		table = new JTable(datas);
+//		数据居中显示
+	    DefaultTableCellRenderer renderer=new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+        table.setDefaultRenderer(Object.class, renderer);
+        
+        tableHeader = table.getTableHeader();
+		tableHeader.setPreferredSize(new Dimension(table.getWidth(), 30));
+		font = new Font("微软雅黑", Font.HANGING_BASELINE, 16);
+		tableHeader.setFont(font);
+		tableHeader.setBackground(new Color(71, 229, 138));
+        
+        table.setRowHeight(25);
+        table.setSelectionBackground(new Color(134, 250, 183));
+        table.setSelectionForeground(new Color(255, 0, 0));
+		scroll = new JScrollPane(table);
+		scroll.setBounds(10, 60, 570, 430);
+		add(scroll);
+//		为选择日期按钮绑定监听器，用来选择日期
+		select_date.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				new select(true,iput_date,700,170);
+			}
+		});
+//		为查询按钮绑定监听器，用来查询现有路线的原始票务信息
+		search.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				getSearchDataByQuery();
+				DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+				tableModel.setDataVector(data, name);
+			}
+		});	
+//		为添加所有车次按钮绑定监听器
+		put_all.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				getAllDataByQuery();
+				putAllTicketsToDB();
+			}
+		});	
+		sell.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				new Reservation();
+				dispose();
+			}
+		});	
+		exit.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Admin_Login_Input.admin_name="";
+				new Reservation();
+				dispose();
+			}
+			
+		});
+		
+		update.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				int n = JOptionPane.showConfirmDialog(null, "您确定要更改车次信息吗?", "确认对话框",
+				JOptionPane.YES_NO_CANCEL_OPTION);
+		        // 0表示点击了确认和是
+			    if (n != 0) {
+			   	   return;
+			    }
+				int rowcount = table.getRowCount();
+//				System.out.println(rowcount);
+				int row = 0;
+				updata = new String[rowcount][8];
+				for(int i=0;i<rowcount;i++){
+					if((String)table.getValueAt(i, 0)==null){
+						row = i;
+						break;
+					}
+					for(int j=0;j<8;j++){
+//						System.out.println((String)table.getValueAt(i, j));
+						updata[i][j]=(String)table.getValueAt(i, j);
+//						System.out.println(data[i][j]);
+					}
+				}
+//				System.out.println(row);
+				ConnectionDB();
+				
+				try {	
+SQL = "delete from Original_Tickets where tiket_start_station='"+istart_station.getText()+"' and tiket_end_station='"+iend_station.getText()+"'";
+					sql = con.prepareStatement(SQL);
+					sql.executeUpdate();
+					
+					for(int i=0;i<row;i++){
+SQL="insert into Original_Tickets(train_number,tiket_start_station,tiket_end_station,tiket_start_date,tiket_end_date," +
+"orig_price,orig_tickets_num,duration) values('"+updata[i][0]+"','"+updata[i][1]+"','"+updata[i][2]+"',#"+updata[i][3]+"#,#"+updata[i][4]+"#," +
+"'"+updata[i][5]+"','"+updata[i][6]+"','"+updata[i][7]+"')";	
+						sql = con.prepareStatement(SQL);
+						if(sql.executeUpdate()==0){
+							return;
+						}
+					}
+					JOptionPane.showMessageDialog(null,"更新成功！","提示信息",JOptionPane.INFORMATION_MESSAGE);							
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			
+		});
+	
+		stop.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				if(Admin_Put_Tickets.sale==true){
+					Admin_Put_Tickets.sale=false;
+					JOptionPane.showMessageDialog(null,"已停止售票！","提示信息",JOptionPane.INFORMATION_MESSAGE);	
+				}else{
+					Admin_Put_Tickets.sale=true;
+					JOptionPane.showMessageDialog(null,"已恢复售票！","提示信息",JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			
+		});
+	}
+
+	public void init() {
+//		创建该界面的各个组件
+		date = new Date();
+		format = new SimpleDateFormat("yyyy-MM-dd");
+		search = new JButton("查询");
+		put_all = new JButton("全部添加");
+		sell = new JButton("转到售票界面");
+		update = new JButton("更新该路线车次");
+		stop = new JButton("停止售票");
+		put = new JButton("添加到数据库");
+		select_date = new JButton("选择日期");
+		exit = new JButton("退出登录");
+		start_station = new JLabel("起点站:");
+		end_station = new JLabel("终点站:");
+		put_date = new JLabel("放票日期:");
+		info = new JLabel("说明：如果需要改变原始车次信息，请到数据库中修改。");
+//		设置说明文字的字体
+		info.setFont(new Font("微软雅黑",Font.ITALIC,12));
+		istart_station = new JTextField("北京");
+		iend_station = new JTextField("天津");
+		iput_date = new JTextField(format.format(date));
+//		设置界面为自由布局
+		setLayout(null);
+//		给这个界面的组件进行布局
+//		横向组件
+		start_station.setBounds(10, 10, 50, 30);
+		istart_station.setBounds(60, 10, 100, 30);
+		end_station.setBounds(170, 10, 50, 30);
+		iend_station.setBounds(220, 10, 100,30);
+		put_date.setBounds(330, 10, 60, 30);
+		iput_date.setBounds(395, 10, 100, 30);
+		select_date.setBounds(492, 10, 90, 30);
+		info.setBounds(10,38,510,20);
+		search.setBounds(590, 10, 150, 30);
+//		纵向按钮
+		put_all.setBounds(590, 60, 150, 30);
+		sell.setBounds(590, 110, 150, 30);
+		exit.setBounds(590, 210, 150, 30);
+//		put.setBounds(590, 210, 150, 30);
+		update.setBounds(590, 160, 150, 30);
+		stop.setBounds(590, 260, 150, 30);
+//		将组件添加到容器
+		add(start_station);
+		add(istart_station);
+		add(end_station);
+		add(iend_station);
+		add(put_date);
+		add(iput_date);
+		add(select_date);
+		add(info);
+		add(search);
+		add(put_all);
+		add(sell);
+		add(exit);
+		add(update);
+		add(stop);
+	}
+//	连接数据库
+	public void  ConnectionDB(){
+		try {
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		} catch (ClassNotFoundException e) {
+			System.out.print(e);
+		}
+		try {
+			con = DriverManager.getConnection("jdbc:odbc:Sell Tickets", "", "");
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+//	获取初始北京到天津的票务信息
+	public void  getInitDBDataByQuery(){
+		try{
+//			获取初始数据集
+			SQL = "select * from Original_Tickets where tiket_start_station='"+istart_station.getText()+"' and tiket_end_station='"+iend_station.getText()+"'"; 
+			sql = con.prepareStatement(SQL);
+			result1 = sql.executeQuery();
+//			获取初始数据集的记录数
+			SQL = "select count(*) as totalcount from Original_Tickets where tiket_start_station='"+istart_station.getText()+"' and tiket_end_station='"+iend_station.getText()+"'"; 
+			sql = con.prepareStatement(SQL);
+			result2 = sql.executeQuery();
+			rowCount = 0;
+			if (result2.next()) {
+				rowCount = result2.getInt("totalcount");
+			}
+			
+			Integer remain_number;
+			data = new String[rowCount+25][8];
+			
+			for (int i = 0; result1.next(); i++) {
+				data[i][0] = result1.getString(2);
+				data[i][1] = result1.getString(3);
+				data[i][2] = result1.getString(4);
+				data[i][3] = result1.getTime(5).toString();
+				data[i][4] = result1.getTime(6).toString();
+				data[i][5] = result1.getString(7);
+				remain_number = new Integer(result1.getInt(8));
+				data[i][6] = remain_number.toString();
+				data[i][7] = result1.getString(9);
+			}
+		}catch(SQLException e){
+			System.out.println(e);
+		}
+	}
+//	获取查询数据
+//	获取初始北京到天津的票务信息
+	public void  getSearchDataByQuery(){
+		try{
+//			获取初始数据集
+			SQL = "select * from Original_Tickets where tiket_start_station='"+istart_station.getText()+"' and tiket_end_station='"+iend_station.getText()+"'"; 
+			sql = con.prepareStatement(SQL);
+			result1 = sql.executeQuery();
+//			获取初始数据集的记录数
+			SQL = "select count(*) as totalcount from Original_Tickets where tiket_start_station='"+istart_station.getText()+"' and tiket_end_station='"+iend_station.getText()+"'"; 
+			sql = con.prepareStatement(SQL);
+			result2 = sql.executeQuery();
+			rowCount = 0;
+			if (result2.next()) {
+				rowCount = result2.getInt("totalcount");
+			}
+			
+			Integer remain_number;
+			data = new String[rowCount+25][8];
+			
+			for (int i = 0; result1.next(); i++) {
+				data[i][0] = result1.getString(2);
+				data[i][1] = result1.getString(3);
+				data[i][2] = result1.getString(4);
+				data[i][3] = result1.getTime(5).toString();
+				data[i][4] = result1.getTime(6).toString();
+				data[i][5] = result1.getString(7);
+				remain_number = new Integer(result1.getInt(8));
+				data[i][6] = remain_number.toString();
+				data[i][7] = result1.getString(9);
+			}
+		}catch(SQLException e){
+			System.out.println(e);
+		}
+	}
+	
+//	添加全部车次信息到数据库
+	public void  getAllDataByQuery(){
+		try{
+//			获取初始数据集
+			SQL = "select * from Original_Tickets"; 
+			sql = con.prepareStatement(SQL);
+			result1 = sql.executeQuery();
+//			获取初始数据集的记录数
+			SQL = "select count(*) as totalcount from Original_Tickets"; 
+			sql = con.prepareStatement(SQL);
+			result2 = sql.executeQuery();
+			rowCount = 0;
+			if (result2.next()) {
+				rowCount = result2.getInt("totalcount");
+			}
+			
+			Integer remain_number;
+			data = new String[rowCount+25][8];
+			
+			for (int i = 0; result1.next(); i++) {
+				data[i][0] = result1.getString(2);
+				data[i][1] = result1.getString(3);
+				data[i][2] = result1.getString(4);
+				data[i][3] = result1.getTime(5).toString();
+				data[i][4] = result1.getTime(6).toString();
+				data[i][5] = result1.getString(7);
+				remain_number = new Integer(result1.getInt(8));
+				data[i][6] = remain_number.toString();
+				data[i][7] = result1.getString(9);
+			}
+			
+		}catch(SQLException e){
+			System.out.println(e);
+		}
+	}
+	
+//	将票放入数据库
+	public void putAllTicketsToDB(){
+		try{
+			String str = iput_date.getText();
+			SQL = "select tiket_start_date from Tickets where DateDiff('d',tiket_start_date, #"
+					+ str
+					+ "#)<=0 "
+					+ "AND DateDiff( 'd', tiket_start_date, #"
+					+ str + "#)>=0";
+			sql = con.prepareStatement(SQL);
+			ResultSet result = sql.executeQuery();
+			if(result.next()){
+				JOptionPane.showMessageDialog(null,iput_date.getText()+"号的票务信息你已经添加过，请不要重复添加！","提示信息",JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			int count=0;
+			for(int i=0;i<rowCount;i++){
+				SQL="insert into Tickets(train_number,tiket_start_station,tiket_end_station," +
+						"tiket_start_date,tiket_end_date,tiket_ticket_price," +
+						"tiket_remain_tickets,duration) values('"+data[i][0]+"'" +
+						",'"+data[i][1]+"','"+data[i][2]+"',"+"#"+iput_date.getText()+" "+data[i][3]+"#,"
+						+"#"+data[i][4]+"#,'"+data[i][5]+"',"+Integer.parseInt(data[i][6])+",'"+data[i][7]+"')";	
+				sql = con.prepareStatement(SQL);
+				if(sql.executeUpdate()!=0){
+					count++;
+				}
+			}
+			if(count==rowCount){
+				JOptionPane.showMessageDialog(null,"添加成功！","提示信息",JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				JOptionPane.showMessageDialog(null,"添加失败！","提示信息",JOptionPane.ERROR_MESSAGE);
+			}
+		}catch(SQLException e){
+			System.out.println(e);
+		}
+	}
+
+}

@@ -1,0 +1,222 @@
+import java.awt.*;
+
+import javax.swing.*;
+
+import java.sql.*;
+import java.awt.event.*;
+
+public class User_Register extends JFrame{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	JLabel name,password,sex,birth,phone;
+	JTextField name_input,phone_input;
+	JPasswordField password_input;
+	ButtonGroup group;
+	JRadioButton man,woman;
+	JLabel _year,_month,_day;
+	JComboBox<Integer> year,month,day;
+	JButton register,cancel;
+	String _sex = "男",user_year="1990",user_month="1",user_day="1";
+	ActionListener register_lisrener;
+	public User_Register(){
+		init();
+		setVisible(true);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	}
+	public void init(){
+		setLayout(null);
+		name = new JLabel("姓名:");
+		password = new JLabel("密码:");
+		sex = new JLabel("性别:");
+		birth = new JLabel("出生日期:");
+		phone = new JLabel("手机号码:");
+		name.setBounds(36, 10, 70, 30);
+		password.setBounds(36, 90, 70, 30);
+		sex.setBounds(36, 150, 70, 30);
+		birth.setBounds(10, 200, 70, 30);
+		phone.setBounds(10, 250, 70, 30);
+		
+		name_input = new JTextField(10);
+		password_input  =new JPasswordField(10);
+		group = new ButtonGroup();
+		man = new JRadioButton("男",true);
+		woman = new JRadioButton("女");
+		_year = new JLabel("年:");
+		_month = new JLabel("月:");
+		_day = new JLabel("日:");
+		year = new JComboBox<Integer>();
+		month = new JComboBox<Integer>();
+		day = new JComboBox<Integer>();
+		phone_input = new JTextField(10);
+		register = new JButton("提交");
+		cancel = new JButton("取消");
+		register.setFocusPainted(false);
+		
+		name_input.setBounds(90, 10, 150, 30);
+		password_input.setBounds(90, 90, 150, 30);
+		man.setBounds(80, 150, 50, 30);
+		woman.setBounds(210, 150, 50, 30);
+		_year.setBounds(90, 200, 20, 30);
+		_month.setBounds(190, 200, 20, 30);
+		_day.setBounds(290, 200, 20, 30);
+		year.setBounds(115, 200, 70, 30);
+		month.setBounds(215, 200, 70, 30);
+		day.setBounds(315, 200, 70, 30);
+		phone_input.setBounds(90, 250, 150, 30);
+		register.setBounds(110, 330, 70, 30);
+		cancel.setBounds(250, 330, 70, 30);
+		for(int i=1990;i<2017;i++){
+			year.addItem(i);
+		}
+		for(int i=1;i<=12;i++){
+			month.addItem(i);
+		}
+		for(int i=1;i<=31;i++){
+			day.addItem(i);
+		}
+		
+		group.add(man);
+		group.add(woman);
+		add(name);
+		add(password);
+		add(sex);
+		add(birth);	
+		add(phone);
+		add(name_input);
+		add(password_input);
+		add(man);
+		add(woman);
+		add(_year);
+		add(_month);
+		add(_day);
+		add(year);
+		add(month);
+		add(day);
+		add(phone_input);
+		add(register);
+		add(cancel);
+		
+		setTitle("用户注册");
+		//设置窗口的大小和在屏幕中的初始位置
+		int width = 500,height=500;
+		int x = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2 ;
+		int y = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
+		setBounds(x, y, width, height);
+		
+		man.addActionListener(new ActionListener() {     // 捕获单选按钮被选中的事件
+			public void actionPerformed(ActionEvent e) {
+				_sex = man.getText();
+			}
+		});
+		woman.addActionListener(new ActionListener() {     // 捕获单选按钮被选中的事件
+			public void actionPerformed(ActionEvent e) {
+				_sex = woman.getText();
+			}
+		});
+		year.addItemListener(new ItemListener(){
+			public void itemStateChanged(ItemEvent e){
+				if(e.getStateChange() == ItemEvent.SELECTED){
+					user_year = year.getSelectedItem().toString();
+				}
+				
+			}
+		});
+		month.addItemListener(new ItemListener(){
+			public void itemStateChanged(ItemEvent e){
+				if(e.getStateChange() == ItemEvent.SELECTED){
+					user_month = month.getSelectedItem().toString();
+				}
+				
+			}
+		});
+		day.addItemListener(new ItemListener(){
+			public void itemStateChanged(ItemEvent e){
+				if(e.getStateChange() == ItemEvent.SELECTED){
+					user_day = day.getSelectedItem().toString();
+				}
+				
+			}
+		});
+		
+		//为注册按钮定义操作
+		register.addActionListener(register_lisrener=new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				//同名局部变量会覆盖成员变量
+				String name = name_input.getText();
+				if(name.length()>50 || name.length()==0){
+					JOptionPane.showMessageDialog(null,"用户名长度必须是0——50！","提示信息",JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String password = new String(password_input.getPassword());
+				//字母是数字以及常见标点符号
+				String regex = "[\\p{Alnum}~！@#$%^&*()-_+]+";
+				if(password.trim().length() < 6 || password.trim().length() > 20 ){
+					JOptionPane.showMessageDialog(null,"用户密码长度必须在6——20","提示信息",JOptionPane.ERROR_MESSAGE);
+					return;
+				}else if(!password.trim().matches(regex)){
+					JOptionPane.showMessageDialog(null,"用户密码必须是数字，字母，常见标点符号！！","提示信息",JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String number = phone_input.getText(); 
+				regex = "[\\p{Digit}]+";
+				if(number.length()!=11 || !number.matches(regex)){
+					JOptionPane.showMessageDialog(null,"手机号码必须是11位数字","提示信息",JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String birthday = user_year+"-"+user_month+"-"+user_day;
+				String sex = _sex;
+				
+				//连接数据库向其中写入数据
+				Connection con;
+				PreparedStatement sql;
+				String SQL;
+				try{
+					Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+				}
+				catch(ClassNotFoundException e1){
+					System.out.print(e1);
+				}
+				try{
+					con=DriverManager.getConnection("jdbc:odbc:Sell Tickets","","");
+					
+//					查看是否有同名的用户
+					SQL = "select user_name from User";
+					sql=con.prepareStatement(SQL);
+					ResultSet re = sql.executeQuery();
+					while(re.next()){
+						if(name.trim().equals(re.getString("user_name"))){
+							JOptionPane.showMessageDialog(null,"该用户名已注册,请重新注册！","提示信息",JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+					}
+					SQL="insert into User(user_name,user_password,user_sex,user_birth_date,user_phone) " +
+							"values('"+name+"','"+password+"','"+sex+"','"+birthday+"','"+number+"')";
+					sql=con.prepareStatement(SQL);
+					if(sql.executeUpdate()!=0){
+						JOptionPane.showMessageDialog(null,"恭喜你！ 注册成功","提示信息",JOptionPane.INFORMATION_MESSAGE);
+						User_Login_Input.user_name = name;
+						new Reservation();
+						dispose();
+					}
+					else{
+						JOptionPane.showMessageDialog(null,"注册失败，请重新注册","提示信息",JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+				catch(SQLException e1){
+					System.out.println(e1);
+				}
+				dispose();
+			}
+		});
+		cancel.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				new Reservation();
+				dispose();
+			}
+		});
+		register.registerKeyboardAction(register_lisrener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+	}
+}
