@@ -1,0 +1,84 @@
+*{
+    padding:0;
+    margin:0;
+}
+ul{
+    list-style:none;
+}
+
+#app{
+    width:900px;
+    margin:0 auto;
+    background: #f3f3f3;
+    h2{
+        text-align:center;
+    }
+    .picwall{
+        ul{
+            width:900px;
+            height:500px;
+            border:1px solid #ccc;
+            position:relative;
+            li{
+                position: absolute;
+                border:20px solid white;
+                transition:1s;
+            }
+            li:nth-child(1){
+                transform: scale(0.2) rotate(30deg);
+                left:-380px;
+                top:-240px;
+            }
+            li:nth-child(2){
+                transform: scale(0.2) rotate(30deg);
+                left:-150px;
+                top:-270px;
+            }
+            li:nth-child(3){
+                transform: scale(0.14) rotate(30deg);
+                left:-300px;
+                top:-240px;
+            }
+            li:nth-child(4){
+                transform: scale(0.2) rotate(-30deg);
+                left:-380px;
+                top:-270px;
+            }
+            li:nth-child(5){
+                transform: scale(0.2) rotate(30deg);
+                left:180px;
+                top:-230px;
+            }
+            li:nth-child(6){
+                transform: scale(0.17) rotate(-30deg);
+                left:-100px;
+                top:-440px;
+            }
+            li:nth-child(7){
+                transform: scale(0.14) rotate(-30deg);
+                left:-220px;
+                top:-260px;
+            }
+            li:nth-child(8){
+                transform: scale(0.2) rotate(-30deg);
+                left:-190px;
+                top:-300px;
+            }
+            li:nth-child(9){
+                transform: scale(0.18) rotate(30deg);
+                left:-200px;
+                top:-380px;
+            }
+            li:nth-child(10){
+                transform: scale(0.2) rotate(-30deg);
+                left:-350px;
+                top:-20px;
+            }
+            li:hover{
+                transform: scale(0.3) rotate(0deg);
+                box-shadow: 10px 10px 7px 5px rgb(128, 117, 117);
+                z-index: 100;
+            }
+        }
+    }
+}

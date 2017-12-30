@@ -1,0 +1,21 @@
+#app{
+    width: 600px;
+    height: 300px;
+    display:flex;
+    justify-content: space-around ;
+    background: rgb(245, 238, 238);
+    .size(@color:red){
+        width: 600px;
+        height:100px;
+        background: @color;
+    }
+    .box1{
+        .size();
+    }
+    .box2{
+        .size(rgb(203, 211, 98));
+    }
+    .box3{
+        .size(gray);
+    }
+}
