@@ -1,0 +1,233 @@
+#nav{
+	width:1200px;
+	height:50px;
+	margin:0 auto;
+	margin-top:5px;
+	background:rgb(85,98,68);
+}
+#nav ul li{
+	float:left;
+}
+#nav ul li a{
+	display:block;
+	width:131px;
+	height:50px;
+	margin-left:2px;
+	text-align:center;
+	line-height:50px;
+	font-size:20px;
+	color:white;
+}
+#nav ul li a.first{
+	background:rgb(230,0,0);
+}
+#nav ul li a:hover{
+	background:rgb(230,0,0);
+}
+#banner{
+	width:1200px;
+	height:310px;
+	margin:0 auto;
+	margin-top:6px;
+	background:rgb(120,50,110);
+}
+/*为使IE7中元素显示在同一行，都要用float*/
+#banner .left{
+	float:left;
+	width:800px;
+	height:310px;
+	background:rgb(80,50,110);
+}
+#banner .left .big-pic{
+	float:left;
+	margin-top:2px;
+	margin-left:30px;
+	border:2px solid rgb(240,240,240);
+}
+#banner .left ul{
+	float:left;
+	margin-left:80px;
+	margin-top:16px;
+}
+#banner .left ul li{
+	width:100px;
+	height:50px;
+	border:2px solid rgb(230,230,230);
+}
+#banner .left ul li:hover{
+	border:2px solid rgb(230,0,50);
+}
+#banner .right{
+	float:right;
+	width:400px;
+	height:310px;
+	background:url('../img/每日一语.jpg') no-repeat 10px;
+}
+#banner .right p{
+	width:200px;
+	margin-top:120px;
+	margin-left:150px;
+	font-size:20px;
+}
+#banner .right p span{
+	display:block;
+	margin-top:15px;
+	text-align:right;
+}
+#main{
+	width:1200px;
+	margin:0 auto;
+	margin-top:5px;
+}
+#main .content{
+	float:left;
+	width:800px;
+	margin-bottom:20px;
+	background:rgb(150,20,30);
+}
+#main .content .list ul li>div{
+	float:left;
+}
+#main .content .list ul{
+	margin-top:20px;
+}
+#main .content .list ul li{
+	height:170px;
+	margin-bottom:10px;
+	background:rgb(240,240,240);
+}
+#main .content .list ul li .pic{
+	margin-top:20px;
+	margin-left:20px;
+}
+#main .content .list ul li .article{
+	width:550px;
+	margin-top:10px;
+	margin-left:30px;
+}
+#main .content .list ul li .article .main-content{
+	margin-top:7px;
+}
+#main h2.h2{
+	border-left:2px solid rgb(20,150,30); 
+	padding-left:10px;
+	font-size:22px;
+}
+#main .slide{
+	float:right;
+	width:390px;
+	margin-bottom:10px;
+	background:rgb(100,20,30);
+}
+#main .slide .search{
+	position:relative;
+	padding:20px 0;
+	margin-top:20px;
+	margin-bottom:20px;
+	background:rgb(250,250,250);
+}
+#main .slide .search form .search-value{
+	width:215px;
+	height:30px;
+	outline:none;
+	padding-left:20px;
+	padding-right:30px;
+	margin-left:60px;
+	line-height:30px;
+	font-size:18px;
+}
+::-ms-clear,::-ms-reveal{
+	display:none;
+}
+::-moz-placeholder{
+	color:rgb(180,180,180);
+}              
+::-webkit-input-placeholder{
+	color:rgb(180,180,180);
+}
+:-ms-input-placeholder{
+	color:rgb(180,180,180);
+}   
+#main .slide .search form .placeholder{
+	position:absolute;
+	width:215px;
+	height:30px;
+	left:82px;
+	top:22px;
+	line-height:30px;
+	color:rgb(180,180,180);
+	cursor:text;
+}
+#main .slide .search form .search-btn{
+	position:absolute;
+	right:60px;
+	top:25px;
+	width:30px;
+	height:30px;
+	border:none;
+	outline:none;
+	background:url('../img/search.png') no-repeat 3px 3px;
+}
+#main .slide .search form .search-btn:hover{
+	cursor:pointer;
+}
+#main .slide .column{
+	height:100px;
+	padding-left:40px;
+	padding-bottom:20px;
+	background:rgb(150,210,230);
+}
+#main .slide .column ul li{
+	float:left;
+	width:120px;
+	height:40px;
+	margin-left:20px;
+	margin-top:10px;
+}
+#main .slide .column ul li a{
+	display:block;
+	width:120px;
+	height:40px;
+	background:rgb(10,210,30);
+	text-align:center;
+	line-height:40px;
+}
+#main .slide .column ul li a:hover{
+	background:red;
+}
+#main .slide .hot-click h3{
+	padding-left:10px;
+	border-left:3px solid rgb(210,120,20);
+	font-size:18px;
+}
+#main .slide .hot-click .title{
+	position:relative;
+}
+#main .slide .hot-click .title ul{
+	margin-top:10px;
+}
+#main .slide .hot-click .title ul li{
+	height:30px;
+	padding-left:40px;
+	border-bottom:1px dashed black;
+}
+#main .slide .hot-click .title ul li a{
+	display:block;
+	width:100%;
+	height:30px;
+	line-height:30px;
+	text-align:left;
+}
+#main .slide .hot-click .title ol{
+	position:absolute;
+	top:4px;
+	left:7px;
+}
+#main .slide .hot-click .title ol li{
+	width:20px;
+	height:20px;
+	margin-bottom:11px;
+	background:rgb(0,255,0);
+	line-height:20px;
+	text-align:center;
+}
