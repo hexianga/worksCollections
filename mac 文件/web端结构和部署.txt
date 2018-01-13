@@ -1,0 +1,212 @@
+1.CDN的全称是Content Delivery Network，即内容分发网络。
+基本思路是尽可能避开互联网上有可能影响数据传输速度和稳定性的瓶颈和环节，使内容传输的更快、更稳定。
+
+通过在网络各处放置节点服务器所构成的在现有的互联网基础之上的一层智能虚拟网络，
+CDN系统能够实时地根据“网络流量”和“节点的连接、负载状况”以及到“用户的距离和响应时间”
+等综合信息将用户的请求“重新导向”离用户最近的服务节点上。
+
+终极目的：提高用户访问网站的响应速度。
+
+2.返回值：{"code": 0, "data": {}}
+
+3.jsp+css+js: web端前端要做的事
+
+看一下一些css实现？？？html结构相对简单。JS实现？？？
+CSS实现基本上都比较简单，主要是看js原生代码。
+
+4.前后端分离： 
+前后端分离的例子就是SPA(Single-page application)，所有用到的展现数据都是后端通过异步接口(AJAX/JSONP)的方式提供的，前端只管展现。
+前端：负责View和Controller层。-
+后端：负责Model层，业务处理/数据等。
+
+5.Restful API：
+REST即表述性状态传递：软件架构风格
+REST 通常使用 JSON 数据格式。   我的理解：简单来说就是让自己网站的URI更为合理和可读性更强。（删除/delete，添加/add，查询/select。。）
+
+
+serializeArray()
+localStorage.getItem
+localStorage.setItem
+$.ajax({
+type:"get"
+url:
+error:
+success:
+data: 
+cache:防止浏览器从缓存中调取数据
+location.href
+location.hash
+$(window).height(),
+$(function () {//DOM文档载入成功后执行的函数
+siblings
+on方法：第二个选择器用来筛选被选中元素的子元素来触发事件
+
+
+
+博客：
+lodash
+jquery
+google anylist
+understack.js
+Immutable.js库
+
+
+
+
+
+
+
+
+
+
+
+第二次就会全部覆盖，第一次点击不会全部覆盖
+            <p class="prd-compare-price ${p.type == 'STANDARD_ANCESTRY' ? 'fcred':''}">${p.type == 'STANDARD_ANCESTRY' ? '满三送一' : '￥'+${p.price.intValue()}}</p>
+
+
+ web端没有api，我就不知道返回的数据究竟是什么。
+
+
+改好:
+cart.jsp,
+cart.css
+product/index.jsp
+改好：
+index.jsp
+index.css
+微信端：
+index.jsp
+overview.css
+product/index.jsp
+app端：
+三个平台怎么处理？？
+
+
+
+app端：
+主要的业务逻辑是：
+
+订单提交里面的属性
+@connect(state => ({
+  receiptInfo: state.receipt,
+  couponList: state.coupon.list,
+  isSelectedSelf: state.coupon.isSelectedSelf,
+  balance: state.user.balance,
+}))
+
+
+"enableCoupon": true:这个参数要在订单数大于3的时候置位false。
+"balance": 用户的余额参数是需要我去获取的
+
+
+
+
+
+
+
+
+useableCoupon：number 可用优惠券的数量
+avatar：头像
+barcode：条码，在这里指的是唾液盒的条码，每一个人的唾液盒条码都是不一样的
+surname：姓
+isSelectedSelf: false,:表示用户是否重新选择了优惠券组合
+remark：备注信息
+express；特快
+
+进入orderform页面时传的参数：
+productId: payload.pid,
+productNum: payload.num,
+
+
+
+
+
+upgrade的代码：
+handleUpgrade() {
+this.props.navigator.push({
+  id: route.PRODUCT_UPGRADE,
+  component: ProductUpgrade,
+});
+}
+提交订单的api：
+favorablecard：[] 优惠卡
+
+
+优惠券返回的信息？？
+export function fetchCouponList() {
+  return dispatch => (
+    network.get(`${host}/api/user/coupon`).then((response) => {
+      if (response.code === errorCode.SUCCESS) {
+        dispatch({
+          type: types.FETCH_COUPON_LIST,
+          list: response.data.list,
+        });
+      }
+    })
+  );
+}
+http://{{host}}/api/sct/express/${mailNO}？？
+favorablecard：优惠券，只需要在满三的时候使优惠券不可用-----渲染效果  加灰还是alert提示
+
+数量满三的时候：
+TouchableOpacity：去掉TouchableOpacity，改变字体颜色
+
+
+
+
+
+
+updateTieredPrice：分层价格
+
+
+
+
+跟据产品（online-product）和用户信息(user)
+
+
+
+
+this.state.coupondisabled
+
+新人优惠券？？？
+
+$('#couponList').find('input:checked').each(function (i, v) {
+                  selected.push($(v).attr('data-id'));
+              });
+
+
+                              if (parseInt($('.cart-amount-num').val()) < 3){
+                  $(".giftWord").html('满3送1 [圣诞特别检测装]')css({'color':'#b2b2b2'});
+                } else {
+                  // $(".giftWord").html('[赠品] 圣诞特别检测装  x1').css({'color':'#333333'});
+                }
+
+            <TouchableOpacity onPress={this.gotoSelectCoupon}>
+              <View style={[styles.couponBox, styles.bdBtm]}>
+                <View style={styles.rowBox}>
+                  <Text allowFontScaling={false} style={styles.normalTitle}>优惠券</Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={[styles.fs12, styles.fmSCR, styles.fcred, styles.couponNum]}
+                  >
+                    {this.getUseableCouponCount()}
+                  </Text>
+                </View>
+                <View style={styles.rowBox}>
+                  <Text allowFontScaling={false} style={[styles.fs14, styles.fmSCR, styles.fcred]}>
+                    减￥{this.getDiscountPrice()}
+                  </Text>
+                  <Image style={styles.iconArrowRightBlack} source={Images.iconArrowRightBlack} />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.showAddCouponModal}>
+              <View style={styles.couponBox}>
+                <Text allowFontScaling={false} style={styles.normalTitle}>使用优惠码</Text>
+                <Image style={styles.iconArrowRightBlack} source={Images.iconArrowRightBlack} />
+              </View>
+            </TouchableOpacity>
+
+
+
+
